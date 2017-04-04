@@ -6,8 +6,9 @@ from django.db import models
 
 
 
-
 class DebtSerializer(serializers.ModelSerializer):
+    borrower = serializers.ReadOnlyField(source='borrower.id')
+
 
     class Meta:
         model = Debt
