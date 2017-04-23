@@ -2,10 +2,12 @@ from rooms.models import Room, History
 from rooms.serializers import PlayerSerializer, HistorySerializer, RoomSerializer
 from rest_framework import generics
 from django.contrib.auth.models import User
-from rooms.permissions import IsOmokAdmin, IsUserOrReadOnly
+from rooms.permissions import IsOmokAdmin
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
+
 
 
 
@@ -30,11 +32,20 @@ class RoomDetail(generics.RetrieveAPIView):
 
 
 class HistoryList(generics.ListCreateAPIView):
-    queryset = History.objects.all()
     serializer_class = HistorySerializer
-    permission_classes = (IsUserOrReadOnly,)
+    # permission_classes = (IsUserOrReadOnly,)
+    def get_queryset(self):
+        return History.objects.filter(room_id=self.kwargs.get('pk'))
+
     def perform_create(self, serializer):
-        serializer.save(player=self.request.user, room=Room.objects.get(pk=self.kwargs.get('pk')))
+        pre_post_player = History.objects.filter(room_id=self.kwargs.get('pk')).order_by('-id')[0].player
+        if self.request.user != pre_post_player:
+            if self.request.user == Room.objects.get(pk=self.kwargs.get('pk')).player1:
+                serializer.save(player=self.request.user, room=Room.objects.get(pk=self.kwargs.get('pk')))
+            elif self.request.user == Room.objects.get(pk=self.kwargs.get('pk')).player2:
+                serializer.save(player=self.request.user, room=Room.objects.get(pk=self.kwargs.get('pk')))
+            else:
+                Response(status=status.HTTP_403_FORBIDDEN)
 
 
 

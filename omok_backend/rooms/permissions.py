@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from rooms.models import Room, History
 
 
 class IsOmokAdmin(permissions.BasePermission):
@@ -13,37 +14,26 @@ class IsOmokAdmin(permissions.BasePermission):
                 return True
 
 
-class IsUserOrReadOnly(permissions.BasePermission):
-
-    def has_object_permission(self, request, view, obj):
-
-        if request.method == 'GET':
-            return True
-
-        if request.method == 'POST':
-            if request.user == obj.room.player1 or request.user == obj.room.player2:
-                return True
+# class IsUserOrReadOnly(permissions.BasePermission):
+#
+#     # def has_permission(self, request, view):
+#     #     if request.method in permissions.SAFE_METHODS:
+#     #         return False
+#     #
+#     #     print(request.user)
+#
 #     def has_object_permission(self, request, view, obj):
-# # Room.objects.get(pk=self.kwargs.get('pk')
-#         print(obj.room.player1.id," ")
-#         print(obj.room.player2.id," ")
-#         print(request.user.id)
 #
 #         if request.method in permissions.SAFE_METHODS:
-#             return True
-
-        # if request.method =='POST':
-        #     print("F")
-        #     if request.user.id == obj.room.player1.id:
-        #         print("U")
-        #         return True
-        #         print("C")
-        #     if request.user.id == obj.room.player2.id:
-        #         print("K")
-        #         return True
-
-        # if request.method =='POST' and (request.user.id == obj.room.player1.id or request.user.id == obj.room.player2.id):
-        #     return True
+#             return False
+#
+#         print(request.user, obj.room.player1)
+#         print(request.user.id, obj.room.player1.id)
+#         if request.method =='POST':
+#             if request.user.id == obj.room.player1.id:
+#                 return True
+#             if request.user.id == obj.room.player2.id:
+#                 return True
 
 
 # class IslenderOrBorrowerReadOnly(permissions.BasePermission):

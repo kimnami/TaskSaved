@@ -42,7 +42,7 @@ class HistorySerializer(serializers.ModelSerializer):
         fields = ('player', 'room','place_i','place_j')
 
 
-# rooms/id/players
+
 class PlayerSerializer(serializers.BaseSerializer):
     def to_representation(self, obj):
         l1 = ([ obj.player1.id ] if obj.player1 else [])
