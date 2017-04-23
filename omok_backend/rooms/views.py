@@ -38,7 +38,11 @@ class HistoryList(generics.ListCreateAPIView):
         return History.objects.filter(room_id=self.kwargs.get('pk'))
 
     def perform_create(self, serializer):
-        pre_post_player = History.objects.filter(room_id=self.kwargs.get('pk')).order_by('-id')[0].player
+        try:
+            pre_post_player = History.objects.filter(room_id=self.kwargs.get('pk')).order_by('-id')[0].player
+        except IndexError:
+            pre_post_player = -1
+
         if self.request.user != pre_post_player:
             if self.request.user == Room.objects.get(pk=self.kwargs.get('pk')).player1:
                 serializer.save(player=self.request.user, room=Room.objects.get(pk=self.kwargs.get('pk')))
